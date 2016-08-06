@@ -362,12 +362,10 @@ class Access extends MY_Controller {
 			if ($this->db->affected_rows () == 1)
 				echo '<div class="span10" id="content"><h1>Congratulations</h1>' . '<p>User ' . $user_data ['username'] . ' was created.</p>';
 				echo json_encode($user_data);
-				echo json_encode($user_profile);
 				echo '</div>';
 		} else {
 			echo '<div class="span10" id="content"><h1>User Creation Error(s)</h1>' . validation_errors ();
 			echo json_encode($user_data);
-			echo json_encode($user_profile);
 			echo '</div>';
 		}
 		
