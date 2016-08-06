@@ -307,7 +307,7 @@ class Access extends MY_Controller {
 				[ 
 						'field' => 'username',
 						'label' => 'username',
-						'rules' => 'max_length[12]|is_unique[' . config_item ( 'user_table' ) . '.username]',
+						'rules' => 'required|max_length[12]|is_unique[' . config_item ( 'user_table' ) . '.username]',
 						'errors' => [ 
 								'is_unique' => 'Username already in use.' 
 						] 
@@ -360,13 +360,20 @@ class Access extends MY_Controller {
 			$this->db->set ( $user_data )->insert ( config_item ( 'user_table' ) );
 			
 			if ($this->db->affected_rows () == 1)
-				echo '<div class="span10" id="content"><h1>Congratulations</h1>' . '<p>User ' . $user_data ['username'] . ' was created.</p>';
-				echo json_encode($user_data);
-				echo '</div>';
-		} else {
-			echo '<div class="span10" id="content"><h1>User Creation Error(s)</h1>' . validation_errors ();
-			echo json_encode($user_data);
-			echo '</div>';
+// 				echo '<div class="span10" id="content"><h1>Congratulations</h1>' . '<p>User ' . $user_data ['username'] . ' was created.</p>';
+// 				echo '</div>';
+				$data = array(
+						'message' => '<div><h1>Congratulations</h1>' . '<p>User ' . $user_data ['username'] . ' was created.</p>',
+				);
+				
+				echo $this->load->view ( 'manager/user_register', $data, TRUE );
+	} else {
+			$data = array(
+					'message' => '<div><h1>User Creation Contain error</h1><div></p>',
+			);
+			
+			$this->load->view('manager/user_register',$data);
+			echo $this->load->view ( 'manager/user_register', '', TRUE );
 		}
 		
 		echo $this->load->view ( 'templates/template_footer', '', TRUE );
