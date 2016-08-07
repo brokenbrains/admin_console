@@ -19,15 +19,15 @@
                 <?php echo form_open( "access/customer_register_post", ['class' => 'std-form form-horizontal'] );?>
                     <fieldset>
 
-                        <div class="control-group <?php if (form_error("user_id") !=='') { echo 'error'; } ?>" value="<?php echo set_value("user_id"); ?>">
+                     <!-- <div class="control-group <?php if (form_error("user_id") !=='') { echo 'error'; } ?>" value="<?php echo set_value("user_id"); ?>">
                             <label class="control-label" for=
-                            "user_id"">User ID</label>
+                            "user_id"">Customer ID</label>
                             <div class="controls">
                                 <input class="input-xlarge" id="user_id"
                                 name="user_id"" type="text">
                                 <span class="help-inline"> <?php if (form_error("user_id") !=='') { echo form_error("user_id"); } ?></span>
                             </div>
-                        </div>
+                        </div> -->   
 
                         <div class="control-group <?php if (form_error("username") !=='') { echo 'error'; } ?>" value="<?php echo set_value("username"); ?>">
                             <label class="control-label" for=

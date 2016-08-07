@@ -115,16 +115,15 @@ class Access extends MY_Controller {
 		
 		echo $this->load->view ( 'examples/page_footer', '', TRUE );
 	}
-	
 	public function create_customer(){
 		// Customize this array for your user
 		$consumer_data = [
-				'user_id' => '1',
+				//'user_id' => '1',
 				'username' => 'consumer1',
 				'email' => 'consumer1@abc.com',
 				'pnum' => '0123456789',
 				'bank_name' => 'abc',
-				'bank_no' => '11111111111111',
+				'bank_no' => '11111111111',
 		]
 ;
 		$this->is_logged_in ();
@@ -140,14 +139,14 @@ class Access extends MY_Controller {
 		
 		$validation_rules = [
 		
-				[
+				/*[
 						'field' => 'user_id',
 						'label' => 'user_id',
 						'rules' => 'max_length[12]|is_unique[' . config_item ( 'consumer_table' ) . '.user_id]',
 						'errors' => [
 								'is_unique' => 'UserID already in use.'
 						]
-				],
+				],*/
 				[
 						'field' => 'username',
 						'label' => 'username',
@@ -195,7 +194,7 @@ class Access extends MY_Controller {
 		$this->form_validation->set_rules ( $validation_rules );
 		
 		if ($this->form_validation->run ()) {
-			$consumer_data ['created_at'] = date ( 'Y-m-d H:i:s' );
+			//$consumer_data ['created_at'] = date ( 'Y-m-d H:i:s' );
 				
 			// If username is not used, it must be entered into the record as NULL
 			if (empty ( $consumer_data ['username'] )) {
@@ -213,7 +212,58 @@ class Access extends MY_Controller {
 		echo $this->load->view ( 'examples/page_footer', '', TRUE );
 		
 	}
+	public function create_game() {
+		// Customize this array for your user
+		$game_data = [
+				'game_id' => '1',
+				'game_name' => 'game1',
+		]
+		;
 	
+		$this->is_logged_in ();
+		echo $this->load->view ( 'examples/page_header', '', TRUE );
+	
+		// Load resources
+		$this->load->model ( 'examples_model' );
+		$this->load->model ( 'validation_callables' );
+		$this->load->library ( 'form_validation' );
+		$this->form_validation->set_data ( $game_data );
+		$validation_rules = [
+				[
+						'field' => 'game_id',
+						'label' => 'game_id',
+						'rules' => 'max_length[12]|is_unique[' . config_item ( 'game_table' ) . '.game_id]',
+						'errors' => [
+								'is_unique' => 'Game ID already in use.'
+						]
+				],
+	
+				[
+						'field' => 'game_name',
+						'label' => 'game_name',
+						'rules' => 'max_length[16]',
+				],
+		];
+		$this->form_validation->set_rules ( $validation_rules );
+	
+		if ($this->form_validation->run ()) {
+			$game_data ['game_id'] = $this->examples_model->get_unused_id ();
+		
+			// If game id is not used, it must be entered into the record as NULL
+			if (empty ( $game_data ['game_id'] )) {
+				$game_data ['game_id'] = NULL;
+			}
+		
+			$this->db->set ( $game_data )->insert ( config_item ( 'game_table' ) );
+		
+			if ($this->db->affected_rows () == 1)
+				echo '<h1>Congratulations</h1>' . '<p>New Game ID ' . $game_data ['game_id'] . ' was created.</p>';
+		} else {
+			echo '<h1>Game ID Creation Error(s)</h1>' . validation_errors ();
+		}
+	
+		echo $this->load->view ( 'examples/page_footer', '', TRUE );
+	}
 	public function login() {
 		// Method should not be directly accessible
 		if ($this->uri->uri_string () == 'Access/login')
@@ -475,10 +525,9 @@ class Access extends MY_Controller {
 		
 		echo $this->load->view ( 'templates/template_footer', '', TRUE );
 	}
-
 	public function customer_register_post() {
 		$consumer_data = [
-				'user_id' => $this->input->post ( 'user_id' ),
+				//'user_id' => $this->input->post ( 'user_id' ),
 				'username' => $this->input->post ( 'username' ),
 				'pnum' => $this->input->post ( 'pnum' ),
 				'email' => $this->input->post ( 'email' ),
@@ -499,14 +548,14 @@ class Access extends MY_Controller {
 		$this->form_validation->set_data ( $consumer_data );
 	
 		$validation_rules = [
-				[
+				/* [
 						'field' => 'user_id',
 						'label' => 'user_id',
 						'rules' => 'max_length[5]|is_unique[' . config_item ( 'consumer_table' ) . '.user_id]',
 						'errors' => [
 								'is_unique' => 'UserID already in use.'
 						]
-				],
+				], */
 	
 				[
 						'field' => 'username',
@@ -556,7 +605,7 @@ class Access extends MY_Controller {
 		$this->form_validation->set_rules ( $validation_rules );
 	
 		if ($this->form_validation->run ()) {
-			$user_data ['created_at'] = date ( 'Y-m-d H:i:s' );
+			//$user_data ['created_at'] = date ( 'Y-m-d H:i:s' );
 				
 			// If username is not used, it must be entered into the record as NULL
 			if (empty ( $consumer_data ['username'] )) {
@@ -568,6 +617,7 @@ class Access extends MY_Controller {
 					if ($this->db->affected_rows () == 1)
 				$data = array(
 						'message' => '<div><h1>Congratulations</h1>' . '<p>Consumer ' . $consumer_data ['username'] . ' was created.</p>',
+						//'message' => '<div><h1>User ID For</h1>' . '<p>Consumer ' . $consumer_data ['username'] . ' is'.$user_id ['user_id'].'</p>',
 				);
 				
 				echo $this->load->view ( 'manager/costumer_register', $data, TRUE );
@@ -582,7 +632,6 @@ class Access extends MY_Controller {
 		
 		echo $this->load->view ( 'templates/template_footer', '', TRUE );
 	}
-	
 	public function costumer_management() {
 		if ($this->require_role ( 'admin' )) {
 			echo $this->load->view ( 'templates/template_header', '', TRUE );
@@ -597,6 +646,75 @@ class Access extends MY_Controller {
 			echo $this->load->view ( 'manager/costumer_register', '', TRUE );
 			echo $this->load->view ( 'templates/template_footer', '', TRUE );
 		}
+	}
+	public function game_register() {
+		if ($this->require_role ( 'admin' )) {
+			echo $this->load->view ( 'templates/template_header', '', TRUE );
+			echo $this->load->view ( 'manager/game_register', '', TRUE );
+			echo $this->load->view ( 'templates/template_footer', '', TRUE );
+		}
+	}
+	public function game_register_post() {
+		$game_data = [
+				'game_id' => $this->input->post ( 'game_id' ),
+				'game_name' => $this->input->post ( 'game_name' ),
+		] ;
+	
+		$this->is_logged_in ();
+	
+		echo $this->load->view ( 'templates/template_header', '', TRUE );
+	
+		// Load resources
+		$this->load->model ( 'examples_model' );
+		$this->load->model ( 'validation_callables' );
+		$this->load->library ( 'form_validation' );
+	
+		$this->form_validation->set_data ( $game_data );
+		$validation_rules = [
+				[
+						'field' => 'game_id',
+						'label' => 'game_id',
+						'rules' => 'required|max_length[12]|is_unique[' . config_item ( 'game_table' ) . '.game_id]',
+						'errors' => [
+								'is_unique' => 'Game ID already in use.'
+						]
+				],
+	
+				[
+						'field' => 'game_name',
+						'label' => 'game_name',
+						'rules' => 'required|max_length[12]',
+				],
+		];
+	
+		$this->form_validation->set_rules ( $validation_rules );
+	
+		if ($this->form_validation->run ()) {
+			$game_data ['created_at'] = date ( 'Y-m-d H:i:s' );
+	
+			// If Game ID is not used, it must be entered into the record as NULL
+			if (empty ( $game_data ['game_id'] )) {
+				$game_data ['game_id'] = NULL;
+			}
+	
+			$this->db->set ( $game_data )->insert ( config_item ( 'game_table' ) );
+	
+			if ($this->db->affected_rows () == 1)
+				$data = array(
+						'message' => '<div><h1>Congratulations</h1>' . '<p>Game ID ' . $game_data ['game_id'] . ' was created.</p>',
+				);
+	
+				echo $this->load->view ( 'manager/game_register', $data, TRUE );
+		} else {
+			$data = array(
+					'message' => '<div><h1>Game ID Creation Contain error</h1><div></p>',
+			);
+	
+			$this->load->view('manager/game_register',$data);
+			echo $this->load->view ( 'manager/game_register', '', TRUE );
+		}
+	
+		echo $this->load->view ( 'templates/template_footer', '', TRUE );
 	}
 	public function withdrawal() {
 		if ($this->require_role ( 'admin' )) {

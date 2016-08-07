@@ -224,7 +224,19 @@
 										echo anchor( site_url(LOGIN_PAGE . '?redirect=access', NULL ),'Login','id="login-link"');
 									}
 									?>
+                                </li>                           
+                                <li>
+                                	<?php 
+                                	if( isset( $auth_user_id ) ){
+										echo anchor( site_url('access/game_register', NULL ),'<i class=
+                                    "icon-file-alt"></i> <span class=
+                                    "hidden-tablet">Game Registration</span>','class="submenu"');
+									}else{
+										echo anchor( site_url(LOGIN_PAGE . '?redirect=access', NULL ),'Login','id="login-link"');
+									}
+									?>
                                 </li>
+                                
                             </ul>
                         </li>
                         <li>
