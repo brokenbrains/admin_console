@@ -115,6 +115,105 @@ class Access extends MY_Controller {
 		
 		echo $this->load->view ( 'examples/page_footer', '', TRUE );
 	}
+	
+	public function create_customer(){
+		// Customize this array for your user
+		$consumer_data = [
+				'user_id' => '1',
+				'username' => 'consumer1',
+				'email' => 'consumer1@abc.com',
+				'pnum' => '0123456789',
+				'bank_name' => 'abc',
+				'bank_no' => '11111111111111',
+		]
+;
+		$this->is_logged_in ();
+		
+		echo $this->load->view ( 'examples/page_header', '', TRUE );
+		
+		// Load resources
+		$this->load->model ( 'examples_model' );
+		$this->load->model ( 'validation_callables' );
+		$this->load->library ( 'form_validation' );
+		
+		$this->form_validation->set_data ( $consumer_data );
+		
+		$validation_rules = [
+		
+				[
+						'field' => 'user_id',
+						'label' => 'user_id',
+						'rules' => 'max_length[12]|is_unique[' . config_item ( 'consumer_table' ) . '.user_id]',
+						'errors' => [
+								'is_unique' => 'UserID already in use.'
+						]
+				],
+				[
+						'field' => 'username',
+						'label' => 'username',
+						'rules' => 'max_length[12]|is_unique[' . config_item ( 'consumer_table' ) . '.username]',
+						'errors' => [
+								'is_unique' => 'Username already in use.'
+						]
+				],
+		
+				[
+						'field' => 'email',
+						'label' => 'email',
+						'rules' => 'trim|required|valid_email|is_unique[' . config_item ( 'consumer_table' ) . '.email]',
+						'errors' => [
+								'is_unique' => 'Email address already in use.'
+						]
+				],
+		
+				[
+						'field' => 'pnum',
+						'label' => 'pnum',
+						'rules' => 'max_length[11]|is_unique[' . config_item ( 'consumer_table' ) . '.pnum]',
+						'errors' => [
+								'is_unique' => 'Phone Number already in use.'
+						]
+				],
+		
+				[
+						'field' => 'bank_name',
+						'label' => 'bank_name',
+						'rules' => 'max_length[9]',
+				],
+		
+				[
+						'field' => 'bank_no',
+						'label' => 'bank_no',
+						'rules' => 'max_length[16]|is_unique[' . config_item ( 'consumer_table' ) . '.bank_no]',
+						'errors' => [
+								'is_unique' => 'Bank Account Number already in use.'
+						]
+				],
+		
+		];
+		
+		$this->form_validation->set_rules ( $validation_rules );
+		
+		if ($this->form_validation->run ()) {
+			$consumer_data ['created_at'] = date ( 'Y-m-d H:i:s' );
+				
+			// If username is not used, it must be entered into the record as NULL
+			if (empty ( $consumer_data ['username'] )) {
+				$consumer_data ['username'] = NULL;
+			}
+				
+			$this->db->set ( $consumer_data )->insert ( config_item ( 'consumer_table' ) );
+				
+			if ($this->db->affected_rows () == 1)
+				echo '<h1>Congratulations</h1>' . '<p>Consumer ' . $consumer_data ['username'] . ' was created.</p>';
+		} else {
+			echo '<h1>User Creation Error(s)</h1>' . validation_errors ();
+		}
+		
+		echo $this->load->view ( 'examples/page_footer', '', TRUE );
+		
+	}
+	
 	public function login() {
 		// Method should not be directly accessible
 		if ($this->uri->uri_string () == 'Access/login')
@@ -360,8 +459,6 @@ class Access extends MY_Controller {
 			$this->db->set ( $user_data )->insert ( config_item ( 'user_table' ) );
 			
 			if ($this->db->affected_rows () == 1)
-// 				echo '<div class="span10" id="content"><h1>Congratulations</h1>' . '<p>User ' . $user_data ['username'] . ' was created.</p>';
-// 				echo '</div>';
 				$data = array(
 						'message' => '<div><h1>Congratulations</h1>' . '<p>User ' . $user_data ['username'] . ' was created.</p>',
 				);
@@ -378,6 +475,114 @@ class Access extends MY_Controller {
 		
 		echo $this->load->view ( 'templates/template_footer', '', TRUE );
 	}
+
+	public function customer_register_post() {
+		$consumer_data = [
+				'user_id' => $this->input->post ( 'user_id' ),
+				'username' => $this->input->post ( 'username' ),
+				'pnum' => $this->input->post ( 'pnum' ),
+				'email' => $this->input->post ( 'email' ),
+				'bank_name' => $this->input->post ( 'bank_name' ),
+				'bank_no' => $this->input->post ( 'bank_no' ),
+		] ;
+	
+	
+		$this->is_logged_in ();
+	
+		echo $this->load->view ( 'templates/template_header', '', TRUE );
+	
+		// Load resources
+		$this->load->model ( 'examples_model' );
+		$this->load->model ( 'validation_callables' );
+		$this->load->library ( 'form_validation' );
+	
+		$this->form_validation->set_data ( $consumer_data );
+	
+		$validation_rules = [
+				[
+						'field' => 'user_id',
+						'label' => 'user_id',
+						'rules' => 'max_length[5]|is_unique[' . config_item ( 'consumer_table' ) . '.user_id]',
+						'errors' => [
+								'is_unique' => 'UserID already in use.'
+						]
+				],
+	
+				[
+						'field' => 'username',
+						'label' => 'username',
+						'rules' => 'max_length[12]|is_unique[' . config_item ( 'consumer_table' ) . '.username]',
+						'errors' => [
+								'is_unique' => 'Username already in use.'
+						]
+				],
+	
+				[
+						'field' => 'pnum',
+						'label' => 'pnum',
+						'rules' => 'max_length[12]|is_unique[' . config_item ( 'consumer_table' ) . '.pnum]',
+						'errors' => [
+								'is_unique' => 'Phone Number already in use.'
+						]
+				],
+	
+				[
+						'field' => 'email',
+						'label' => 'email',
+						'rules' => 'max_length[20]|is_unique[' . config_item ( 'consumer_table' ) . '.email]',
+						'errors' => [
+								'is_unique' => 'Email already in use.'
+						]
+				],
+	
+				[
+						'field' => 'bank_name',
+						'label' => 'bank_name',
+						'rules' => 'max_length[9]',
+							
+				],
+	
+				[
+						'field' => 'bank_no',
+						'label' => 'bank_no',
+						'rules' => 'max_length[16]|is_unique[' . config_item ( 'consumer_table' ) . '.bank_no]',
+						'errors' => [
+								'is_unique' => 'Account Number address already in use.'
+						]
+				],
+	
+		];
+	
+		$this->form_validation->set_rules ( $validation_rules );
+	
+		if ($this->form_validation->run ()) {
+			$user_data ['created_at'] = date ( 'Y-m-d H:i:s' );
+				
+			// If username is not used, it must be entered into the record as NULL
+			if (empty ( $consumer_data ['username'] )) {
+				$consumer_data ['username'] = NULL;
+			}
+				
+			$this->db->set ( $consumer_data )->insert ( config_item ( 'consumer_table' ) );
+				
+					if ($this->db->affected_rows () == 1)
+				$data = array(
+						'message' => '<div><h1>Congratulations</h1>' . '<p>Consumer ' . $consumer_data ['username'] . ' was created.</p>',
+				);
+				
+				echo $this->load->view ( 'manager/costumer_register', $data, TRUE );
+	} else {
+			$data = array(
+					'message' => '<div><h1>User Creation Contain error</h1><div></p>',
+			);
+			
+			$this->load->view('manager/costumer_register',$data);
+			echo $this->load->view ( 'manager/costumer_register', '', TRUE );
+		}
+		
+		echo $this->load->view ( 'templates/template_footer', '', TRUE );
+	}
+	
 	public function costumer_management() {
 		if ($this->require_role ( 'admin' )) {
 			echo $this->load->view ( 'templates/template_header', '', TRUE );
