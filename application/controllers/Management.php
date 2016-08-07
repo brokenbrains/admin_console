@@ -58,5 +58,18 @@ class Management extends MY_Controller {
 	
 			echo $this->load->view('templates/template_footer', '', TRUE);
 		}
+	}	
+	public function game_register()
+	{
+		$this->load->library('../controllers/access');
+		if( $this->require_role('admin') )
+		{
+			echo $this->load->view('templates/template_header', '', TRUE);
+	
+			//echo '<div class="span10" id="content"><p>You are logged in!</p></div>';
+			echo $this->load->view('manager/user_register', '', TRUE);
+	
+			echo $this->load->view('templates/template_footer', '', TRUE);
+		}
 	}
 }
