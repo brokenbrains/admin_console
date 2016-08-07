@@ -15,6 +15,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 // USER RELATED TABLES
 $config['user_table']                   = 'users';
+$config['consumer_table']                   = 'consumers';
 
 // LOGIN ERROR RELATED TABLES
 $config['errors_table']                 = 'login_errors';

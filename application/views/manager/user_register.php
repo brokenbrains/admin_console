@@ -15,7 +15,7 @@
                 "break"></span>Register New User</h2>
             </div>
             <div class="box-content">
-            <?php if($message!=null){echo $message;}?>
+            <?php if(isset($message)){echo $message;}?>
                 <?php echo form_open( "access/user_register_post", ['class' => 'std-form form-horizontal'] );?>
                     <fieldset>
                         <div class="control-group <?php if (form_error("firstname") !=='') { echo 'error'; } ?>" value="<?php echo set_value("firstname"); ?>">
